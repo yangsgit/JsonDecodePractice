@@ -8,11 +8,13 @@
 import Foundation
 
 class NetWork {
-    func webResource(url: URL, completionHandler: @escaping (Data) -> Void) {
+    func webResource(url: URL, completionHandler: @escaping (Data?, Error?) -> Void) {
         let _ = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data {
-                completionHandler(data)
-            }
+            completionHandler(data, error)
         }.resume()
     }
+}
+ 
+public enum HTTPRequestError: Error {
+    case EmptyData
 }

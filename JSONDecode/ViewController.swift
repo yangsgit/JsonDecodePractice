@@ -32,7 +32,16 @@ class ViewController: UIViewController {
     }
     
     private func fetch(url: URL) {
-        network.webResource(url: url) {[weak self] data in
+        network.webResource(url: url) {[weak self] data, error in
+            guard let data = data else {
+                let err = HTTPRequestError.EmptyData
+                self?.handleError(error: err)
+                return
+            }
+            if let err = error {
+                self?.handleError(error: err)
+                return
+            }
             self?.superHeroClub = try? self?.decoder.decode(SuperHeroClub.self, from: data)
             DispatchQueue.main.async {
                 self?.updateUI()
@@ -47,7 +56,12 @@ class ViewController: UIViewController {
         formDate.text = self.superHeroClub?.formed.description
         base.text = self.superHeroClub?.base
     }
+    
+    private func handleError(error: Error) {
+        
+    }
 }
+
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
